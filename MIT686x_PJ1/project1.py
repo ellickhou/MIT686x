@@ -34,6 +34,7 @@ def hinge_loss_single(feature_vector, label, theta, theta_0):
     given data point and parameters.
     """
     # Your code here
+
     z = (label * np.dot(feature_vector, theta)) + theta_0
     if z <1:
         return 1-z
@@ -303,6 +304,9 @@ def classify(feature_matrix, theta, theta_0):
     be considered a positive classification.
     """
     # Your code here
+    pred = np.sign(np.dot(feature_matrix,theta)+theta_0)
+    pred[pred==0]=-1
+    return pred
     raise NotImplementedError
 
 
@@ -312,7 +316,7 @@ def classifier_accuracy(
         val_feature_matrix,
         train_labels,
         val_labels,
-        **kwargs):
+        T=1,L=None):
     """
     Trains a linear classifier and computes accuracy.
     The classifier is trained on the train data. The classifier's
@@ -339,6 +343,17 @@ def classifier_accuracy(
     accuracy of the trained classifier on the validation data.
     """
     # Your code here
+    if L!=None:
+        theta,theta_0 = classifier(train_feature_matrix, train_labels, T, L)
+    else:
+        theta, theta_0 = classifier(train_feature_matrix, train_labels, T)
+    ## train
+    train_preds = classify(train_feature_matrix, theta, theta_0)
+    train_accuracy = accuracy(train_preds, train_labels)
+    ## valid
+    val_preds = classify(val_feature_matrix, theta, theta_0)
+    val_accuracy = accuracy(val_preds, val_labels)
+    return (train_accuracy,val_accuracy)
     raise NotImplementedError
 
 
@@ -363,11 +378,19 @@ def bag_of_words(texts):
     Feel free to change this code as guided by Problem 9
     """
     # Your code here
+    ### 9-1 Remove Stop Words
+    stopwords = open('stopwords.txt', encoding="latin1").read().splitlines()
+    ###
     dictionary = {} # maps word to unique index
     for text in texts:
         word_list = extract_words(text)
         for word in word_list:
-            if word not in dictionary:
+            ### original
+            #if (word not in dictionary):
+            ###
+            ### 9-1 Remove Stop Words
+            if (word not in dictionary) and (word not in stopwords):
+            ###
                 dictionary[word] = len(dictionary)
     return dictionary
 
@@ -391,7 +414,12 @@ def extract_bow_feature_vectors(reviews, dictionary):
         word_list = extract_words(text)
         for word in word_list:
             if word in dictionary:
-                feature_matrix[i, dictionary[word]] = 1
+                ### original
+                # feature_matrix[i, dictionary[word]] = 1
+                ###
+                ### 9-2 Change Binary Features to Counts Features
+                feature_matrix[i, dictionary[word]] += 1
+                ###
     return feature_matrix
 
 
