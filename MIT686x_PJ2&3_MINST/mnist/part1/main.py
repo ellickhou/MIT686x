@@ -8,7 +8,9 @@ from svm import *
 from softmax import *
 from features import *
 from kernel import *
-
+import matplotlib
+matplotlib.use('Qt5Agg')
+from matplotlib import pyplot as plt
 #######################################################################
 # 1. Introduction
 #######################################################################
