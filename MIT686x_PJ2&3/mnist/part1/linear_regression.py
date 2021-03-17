@@ -16,7 +16,19 @@ def closed_form(X, Y, lambda_factor):
         represents the y-axis intercept of the model and therefore X[0] = 1
     """
     # YOUR CODE HERE
-    raise NotImplementedError
+    ## 0 = 1/n(-b + A dot theta_head) + lambda_factor*theta_head
+    ## 1/n*b = 1/n A dot theta_head + I*lamda dot theta_head
+    ## theta_hat = matmul((A+lamda*I)^-1,b) = (d+1,d+1) (d+1, )= (d+1,)
+    ## b = 1/n*sum(X[i]*y[i]) = matmul(X.T, Y) = (d+1,n) (n, ) = (d+1,)
+    ## A = 1/n*matmul(X.T, X) = (d+1,d+1)
+    b = np.matmul(X.T, Y)
+    A = np.matmul(X.T, X)
+    L_array = np.identity(X.shape[1])*lambda_factor
+    A_L = A + L_array
+    theta_hat = np.matmul(np.linalg.pinv(A_L), b)
+    # theta_hat = np.matmul(np.linalg.inv(A_L), b)
+    return theta_hat
+    # raise NotImplementedError
 
 ### Functions which are already complete, for you to use ###
 
