@@ -4,6 +4,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from train_utils import batchify_data, run_epoch, train_model, Flatten
 import utils_multiMNIST as U
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 path_to_data_dir = '../Datasets/'
 use_mini_dataset = True
 
@@ -18,11 +21,16 @@ class MLP(nn.Module):
     def __init__(self, input_dimension):
         super(MLP, self).__init__()
         self.flatten = Flatten()
+        self.h1 = nn.Linear(input_dimension, 64)
+        self.output1 = nn.Linear(64, 10)
+        self.output2 = nn.Linear(64, 10)
         # TODO initialize model layers here
 
     def forward(self, x):
         xf = self.flatten(x)
-
+        h1 = self.h1(xf)
+        out_first_digit = self.output1(h1)
+        out_second_digit = self.output2(h1)
         # TODO use model layers to predict the two digits
 
         return out_first_digit, out_second_digit

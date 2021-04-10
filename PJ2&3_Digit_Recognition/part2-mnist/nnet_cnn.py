@@ -13,6 +13,8 @@ import utils
 from utils import *
 from train_utils import batchify_data, run_epoch, train_model, Flatten
 
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 def main():
     # Load the dataset
     num_classes = 10
@@ -46,6 +48,13 @@ def main():
               nn.Conv2d(1, 32, (3, 3)),
               nn.ReLU(),
               nn.MaxPool2d((2, 2)),
+            nn.Conv2d(32, 64, (3, 3)),
+            nn.ReLU(),
+            nn.MaxPool2d((2, 2)),
+            Flatten(),
+            nn.Linear(1600,128),
+            nn.Dropout(0.5),
+            nn.Linear(128, 10),
             )
     ##################################
 

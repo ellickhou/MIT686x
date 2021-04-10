@@ -4,6 +4,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from train_utils import batchify_data, run_epoch, train_model, Flatten
 import utils_multiMNIST as U
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 path_to_data_dir = '../Datasets/'
 use_mini_dataset = True
 
@@ -20,9 +23,21 @@ class CNN(nn.Module):
     def __init__(self, input_dimension):
         super(CNN, self).__init__()
         # TODO initialize model layers here
-
+        self.conv1 = nn.Conv2d(1,16,(3,3))
+        self.relu = nn.ReLU()
+        self.maxpool = nn.MaxPool2d((2,2))
+        self.flatten = Flatten()
+        self.dropout = nn.Dropout(0.2)
+        self.linear = nn.Linear(4160,64)
+        self.output1 = nn.Linear(64, 10)
+        self.output2 = nn.Linear(64, 10)
     def forward(self, x):
-
+        cov1 = self.maxpool(self.relu(self.conv1(x)))
+        # cov2 = self.maxpool(self.relu(self.conv2(cov1)))
+        h1 = self.flatten(cov1)
+        h2 = self.relu(self.linear(self.dropout(h1)))
+        out_first_digit = self.output1(h2)
+        out_second_digit = self.output2(h2)
         # TODO use model layers to predict the two digits
 
         return out_first_digit, out_second_digit
@@ -52,7 +67,7 @@ def main():
     model = CNN(input_dimension) # TODO add proper layers to CNN class above
 
     # Train
-    train_model(train_batches, dev_batches, model)
+    train_model(train_batches, dev_batches, model, lr=0.01 ,n_epochs=20)
 
     ## Evaluate the model on test data
     loss, acc = run_epoch(test_batches, model.eval(), None)

@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 import _pickle as cPickle, gzip
 import numpy as np
 from tqdm import tqdm
@@ -12,7 +11,8 @@ sys.path.append("..")
 import utils
 from utils import *
 from train_utils import batchify_data, run_epoch, train_model
-
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 def main():
     # Load the dataset
     num_classes = 10
@@ -39,9 +39,9 @@ def main():
     #################################
     ## Model specification TODO
     model = nn.Sequential(
-              nn.Linear(784, 10),
-              nn.ReLU(),
-              nn.Linear(10, 10),
+              nn.Linear(784, 128),
+              nn.LeakyReLU(),
+              nn.Linear(128, 10),
             )
     lr=0.1
     momentum=0

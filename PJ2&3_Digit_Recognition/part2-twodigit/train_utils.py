@@ -38,8 +38,9 @@ def compute_accuracy(predictions, y):
 def train_model(train_data, dev_data, model, lr=0.01, momentum=0.9, nesterov=False, n_epochs=30):
     """Train a model for N epochs given data and hyper-params."""
     # We optimize with SGD
-    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum, nesterov=nesterov)
-
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    val_loss_hist = []
+    val_acc_hist = []
     for epoch in range(1, n_epochs + 1):
         print("-------------\nEpoch {}:\n".format(epoch))
 
@@ -50,7 +51,9 @@ def train_model(train_data, dev_data, model, lr=0.01, momentum=0.9, nesterov=Fal
         # Run **validation**
         val_loss, val_acc = run_epoch(dev_data, model.eval(), optimizer)
         print('Valid | loss1: {:.6f}  accuracy1: {:.6f} | loss2: {:.6f}  accuracy2: {:.6f}'.format(val_loss[0], val_acc[0], val_loss[1], val_acc[1]))
-
+        val_loss_hist.append(val_loss)
+        val_acc_hist.append(val_acc)
+        print(val_loss_hist, '\n', val_acc_hist)
         # Save model
         torch.save(model, 'mnist_model_fully_connected.pt')
 
